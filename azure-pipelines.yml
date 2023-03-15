@@ -1,15 +1,19 @@
-# Xcode
-# Build, test, and archive an Xcode workspace on macOS.
-# Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
-
-trigger:
-- main
-
-pool:
-  vmImage: 'macos-latest'
-
 steps:
+- checkout: self
+  fetchDepth: 0
+
+#Prepare analyse config
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'testgate'
+    organization: 'mateusmantoanutf'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'mateusmantoanutf_mobile-app'
+    cliProjectName: 'mobile-app'
+    cliSources: '.'
+
+#Build step
 - task: Xcode@5
   inputs:
     actions: 'build'
@@ -18,5 +22,5 @@ steps:
     configuration: 'Release'
     xcWorkspacePath: '**/*.xcodeproj/project.xcworkspace'
     xcodeVersion: 'default'
-    
-- task: BrowserStackCon
+
+- task: SonarCloudAnalyze@1
