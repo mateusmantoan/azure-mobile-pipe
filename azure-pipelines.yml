@@ -28,6 +28,7 @@ steps:
 - task: BrowserStackConfig@0
   inputs:
     BrowserStackServiceEndPoint: 'browsestack connection'
+    browserstackLocal: true
 
 - task: BrowserStackResults@1
   inputs:
