@@ -2,9 +2,12 @@
 trigger:
 - main
 
+pool:
+ vmImage: 'macos-latest'
+
 steps:
-- checkout: self
-  fetchDepth: 0
+#- checkout: self
+#  fetchDepth: 0
 
 #Prepare analyse config
 - task: SonarCloudPrepare@1
