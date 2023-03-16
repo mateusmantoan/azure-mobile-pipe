@@ -2,6 +2,11 @@
 trigger:
 - main
 
+#Azure disabled granting free parallel jobs for public projects as I need to keep the project public to integrate the project 
+#with sonarcloud unable to run pipeline with requested parallelism
+#https://learn.microsoft.com/en-us/azure/devops/pipelines/licensing/concurrent-jobs?view=azure-devops&tabs=ms-hosted
+
+#Choose the macos option
 pool:
  vmImage: 'macos-latest'
 
@@ -10,7 +15,7 @@ steps:
   fetchDepth: 0
 
 
-#Prepare analyse config
+#Prepare analyse config from sonar cloud
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: 'testgate'
@@ -21,6 +26,8 @@ steps:
     cliProjectName: 'mobile-app'
     cliSources: '.'
 
+#Following the description of tech challenge the pipeline must test and deploy the application (named BEES.ipa)
+#The next steps are to load the app to pass the test gate
 - task: BrowserStackAppUploader@0
   inputs:
     appPath: './compiled-apps/'
@@ -34,14 +41,16 @@ steps:
   inputs:
     browserstackProduct: 'App Automate'
 
-
-##Build step
-#- task: Xcode@5
-#  inputs:
-#    actions: 'test'
-#    configuration: 'Release'
-#    sdk: 'iphonesimulator'
-#    xcWorkspacePath: 
-#    packageApp: false
-
 - task: SonarCloudAnalyze@1
+
+#The following task declare a dummy name because I don't have access to the certificate files
+- task: InstallAppleCertificate@2
+  inputs:
+    certSecureFile: 'string-of-certificate-file.p12'
+    certPwd: 'string-of-certificate-passwd'
+    keychain: 'temp'
+    
+
+#The last step is to launch the application, but as asked by the recruiter, I don't have access to the
+#Mac Stadium IOS to simulate the IOS platform
+
