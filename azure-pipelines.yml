@@ -6,8 +6,8 @@ pool:
  vmImage: 'macos-latest'
 
 steps:
-#- checkout: self
-#  fetchDepth: 0
+- checkout: self
+  fetchDepth: 0
 
 #Prepare analyse config
 - task: SonarCloudPrepare@1
@@ -20,13 +20,26 @@ steps:
     cliProjectName: 'mobile-app'
     cliSources: '.'
 
-#Build step
-- task: Xcode@5
+- task: BrowserStackAppUploader@0
   inputs:
-    actions: 'test'
-    configuration: 'Release'
-    sdk: 'iphonesimulator'
-    xcWorkspacePath: 
-    packageApp: false
+    appPath: './compiled-apps/'
+
+- task: BrowserStackConfig@0
+  inputs:
+    BrowserStackServiceEndPoint: 'browsestack connection'
+
+- task: BrowserStackResults@1
+  inputs:
+    browserstackProduct: 'App Automate'
+
+
+##Build step
+#- task: Xcode@5
+#  inputs:
+#    actions: 'test'
+#    configuration: 'Release'
+#    sdk: 'iphonesimulator'
+#    xcWorkspacePath: 
+#    packageApp: false
 
 - task: SonarCloudAnalyze@1
