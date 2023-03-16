@@ -9,46 +9,38 @@ steps:
 - checkout: self
   fetchDepth: 0
 
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: |
-      # Write your commands here
-      
-      ls
 
-##Prepare analyse config
-#- task: SonarCloudPrepare@1
+#Prepare analyse config
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'testgate'
+    organization: 'mateusmantoanutf'
+    scannerMode: 'CLI'
+    configMode: 'manual'
+    cliProjectKey: 'mateusmantoanutf_mobile-app'
+    cliProjectName: 'mobile-app'
+    cliSources: '.'
+
+- task: BrowserStackAppUploader@0
+  inputs:
+    appPath: './compiled-apps/'
+
+- task: BrowserStackConfig@0
+  inputs:
+    BrowserStackServiceEndPoint: 'browsestack connection'
+
+- task: BrowserStackResults@1
+  inputs:
+    browserstackProduct: 'App Automate'
+
+
+##Build step
+#- task: Xcode@5
 #  inputs:
-#    SonarCloud: 'testgate'
-#    organization: 'mateusmantoanutf'
-#    scannerMode: 'CLI'
-#    configMode: 'manual'
-#    cliProjectKey: 'mateusmantoanutf_mobile-app'
-#    cliProjectName: 'mobile-app'
-#    cliSources: '.'
-#
-#- task: BrowserStackAppUploader@0
-#  inputs:
-#    appPath: './compiled-apps/'
-#
-#- task: BrowserStackConfig@0
-#  inputs:
-#    BrowserStackServiceEndPoint: 'browsestack connection'
-#
-#- task: BrowserStackResults@1
-#  inputs:
-#    browserstackProduct: 'App Automate'
-#
-#
-###Build step
-##- task: Xcode@5
-##  inputs:
-##    actions: 'test'
-##    configuration: 'Release'
-##    sdk: 'iphonesimulator'
-##    xcWorkspacePath: 
-##    packageApp: false
-#
-#- task: SonarCloudAnalyze@1
-#
+#    actions: 'test'
+#    configuration: 'Release'
+#    sdk: 'iphonesimulator'
+#    xcWorkspacePath: 
+#    packageApp: false
+
+- task: SonarCloudAnalyze@1
